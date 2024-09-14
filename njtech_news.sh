@@ -6,6 +6,8 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import ssl
+import os
+
 
 def fetch_html(url):
     try:
@@ -71,17 +73,34 @@ def send_email(content, sender, password, receivers):
     message['Subject'] = 'Njtech教务处网站新闻'
     message.attach(MIMEText(content, 'html', 'utf-8'))
 
+    # 读取上一次的邮件内容
+    last_content_path = './last_email_content.html'
+    if os.path.exists(last_content_path):
+        with open(last_content_path, 'r', encoding='utf-8') as file:
+            last_content = file.read()
+    else:
+        last_content = ''
+
+    # 比较当前内容与上一次内容
+    if content == last_content:
+        print("邮件内容未变更，不发送邮件")
+        return
+    else:
     try:
+            # 使用SSL上下文来安全发送邮件
         context = ssl.create_default_context()
         with smtplib.SMTP_SSL("smtp.qq.com", 465, context=context) as smtp_obj:
             smtp_obj.login(sender, password)
             smtp_obj.sendmail(sender, receivers, message.as_string())
             print("邮件发送成功")
+                # 保存当前内容为最新内容
+                with open(last_content_path, 'w', encoding='utf-8') as file:
+                    file.write(content)
     except smtplib.SMTPException as e:
         print(f"错误: 无法发送邮件，原因：{e}")
 
 def main():
-    url = 'https://jwc.njtech.edu.cn/index/ggtz/jxyx.htm'
+    url = 'https://jwc.njtech.edu.cn/index/ggtz.htm'
     html = fetch_html(url)
     if html:
         content = parse_content(html)

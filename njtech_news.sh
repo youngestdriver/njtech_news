@@ -85,8 +85,8 @@ def main():
     html = fetch_html(url)
     if html:
         content = parse_content(html)
-        sender = 'xxx@qq.com'                       # 替换为你的实际发件人地址
-        password = ''                               # 替换为你的实际密码
+        sender = 'xxx@qq.com'                       # 替换为你的实际发件人地址 自定义方法查看https://service.mail.qq.com/detail/124/995
+        password = ''                               # 替换为你的SMTP授权码 具体方法查看https://wx.mail.qq.com/list/readtemplate?name=app_intro.html#/agreement/authorizationCode
         receivers = ['xxx1@qq.com, xxx2@qq.com']    # 替换为你的实际收件人地址
         send_email(content, sender, password, receivers)
 

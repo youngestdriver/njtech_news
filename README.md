@@ -20,4 +20,6 @@
 
 效果预览: <br>
 <img src="https://pic.papercrane.top/file/AgACAgUAAyEGAASGppjQAAMFZuWO2C840ldC_f63gczcvod6qekAAr7AMRtLaihXLK08XNGPP1oBAAMCAAN3AAM2BA.png" alt="pic_pc.png" width=70% /> <br>
-<img src="https://pic.papercrane.top/file/AgACAgUAAyEGAASGppjQAAMGZuWO2kkTHWz4i_vBwVXw2QOGJ2YAAr_AMRtLaihXZnyEDYJ2iqEBAAMCAAN3AAM2BA.png" alt="pic_phone.png" width=30% />
+<img src="https://pic.papercrane.top/file/AgACAgUAAyEGAASGppjQAAMGZuWO2kkTHWz4i_vBwVXw2QOGJ2YAAr_AMRtLaihXZnyEDYJ2iqEBAAMCAAN3AAM2BA.png" alt="pic_phone.png" width=30% /> <br>
+
+如果想爬取其他学院的新闻，需修改文中几处url。以及需要检查学院新闻的url格式以及页面上的元素是否一致，否则不适配

@@ -14,7 +14,7 @@ import base64
 def fetch_html(url):
     try:
         # 处理SSL证书验证
-        response = requests.get(url, timeout=30, verify='/etc/ssl/certs/ca-certificates.crt')  # 指定证书路径
+        response = requests.get(url, timeout=30, verify=True)  # Use default SSL verification
         response.raise_for_status()
         response.encoding = response.apparent_encoding
         return response.text
@@ -104,7 +104,7 @@ def send_email(content, sender, password, receivers):
     message.attach(MIMEText(content, 'html', 'utf-8'))
 
     # 读取上一次的邮件内容
-    last_content_path = './last_email_content.html'
+    last_content_path = os.path.join('.', 'last_email_content.html')
     if os.path.exists(last_content_path):
         with open(last_content_path, 'r', encoding='utf-8') as file:
             last_content = file.read()

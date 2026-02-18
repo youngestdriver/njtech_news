@@ -9,6 +9,7 @@ from email.header import Header
 import ssl
 import os
 import base64
+import urllib.parse
 
 
 def fetch_html(url):
@@ -22,8 +23,9 @@ def fetch_html(url):
         print(f"获取数据失败: {e}")
         return None
 
-def parse_content(html):
-    base_url = 'https://jwc.njtech.edu.cn'
+def parse_content(html, url):
+    parsed_url = urllib.parse.urlparse(url)
+    base_url = parsed_url.scheme + '://' + parsed_url.netloc
     soup = BeautifulSoup(html, 'html.parser')
     news_list = soup.find('ul', class_='my-list')
     if not news_list:
@@ -133,7 +135,7 @@ def main():
     url = 'https://jwc.njtech.edu.cn/index/ggtz.htm'
     html = fetch_html(url)
     if html:
-        content = parse_content(html)
+        content = parse_content(html, url)
         sender = 'xxx@qq.com'                       # 替换为你的实际发件人地址 自定义方法查看https://service.mail.qq.com/detail/124/995
         password = ''                               # 替换为你的SMTP授权码 具体方法查看https://wx.mail.qq.com/list/readtemplate?name=app_intro.html#/agreement/authorizationCode
         receivers = ['xxx1@qq.com', 'xxx2@qq.com']    # 替换为你的实际收件人地址

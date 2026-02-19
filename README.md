@@ -7,7 +7,7 @@
 ## 功能说明
 - 抓取目标页面（默认：南京工业大学教务处通知页）。
 - 从 `ul.my-list` 中解析新闻条目，并读取 `span.date` 日期。
-- 生成 HTML 表格邮件内容。
+- 生成新闻行并注入到独立 HTML 模板中。
 - 通过 QQ SMTP（`smtp.qq.com:465`）发送邮件。
 - 若内容无变化，则跳过发送（缓存文件：`last_email_content.html`）。
 
@@ -42,6 +42,16 @@ python3 -m pip install -r requirements.txt
 - 复制 `.env.example` 为 `.env`，并填入真实值。
 - 脚本会在启动时自动加载 `.env`（如果存在）。
 - 如果系统环境变量中已存在同名键，则优先使用系统环境变量。
+
+## 邮件模板
+- 运行时 HTML 模板：`web/index.html`
+- MJML 源模板：`web/index.mjml`
+- `web/index.html` 必须包含以下占位符：
+  - `{{NEWS_TITLE}}`
+  - `{{NEWS_ROWS}}`
+  - `{{SOURCE_URL}}`
+
+如果上述模板文件缺失或为空，脚本会报错并退出。
 
 ## 运行方式
 推荐方式：

@@ -9,8 +9,8 @@ Execution target is Linux only.
 - `njtech_news.sh`: main implementation (Python script with `.sh` extension).
 - `README.md`: usage description and screenshots.
 - `main.py`: empty placeholder file.
-- `web/index.mjml`: empty placeholder file.
-- `web/index.html`: empty placeholder file.
+- `web/index.mjml`: MJML source template for email layout.
+- `web/index.html`: runtime HTML template for email content.
 
 Current repo has `requirements.txt`, but still no tests and no CI configuration.
 
@@ -22,7 +22,8 @@ Current repo has `requirements.txt`, but still no tests and no CI configuration.
    - Parses target page using BeautifulSoup.
    - Expects list container `ul.my-list`.
    - Reads each `li` item with link `<a>` and date `<span class="date">`.
-   - Builds responsive HTML table email content.
+   - Builds table rows and renders email content with `web/index.html`.
+   - Template placeholders used in HTML: `{{NEWS_TITLE}}`, `{{NEWS_ROWS}}`, `{{SOURCE_URL}}`.
 3. `send_email(content, config)`
    - Builds MIME multipart HTML email.
    - Sends through SMTP SSL (`smtp.qq.com:465` by default).
@@ -78,6 +79,7 @@ Configuration file support:
 ## Agent Guidelines For This Repo
 - Keep `njtech_news.sh` executable under Python 3.
 - Keep the script Linux-only unless explicitly requested otherwise.
+- Keep `web/index.html` and `web/index.mjml` in sync when changing email layout.
 - Do not break existing parsing assumptions unless site HTML changed:
   - list selector: `ul.my-list`
   - date selector: `span.date`

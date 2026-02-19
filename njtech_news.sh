@@ -20,8 +20,12 @@ DEFAULT_SMTP_HOST = "smtp.qq.com"
 DEFAULT_SMTP_PORT = 465
 DEFAULT_SENDER_NAME = "NJTech News Bot"
 DEFAULT_SUBJECT = "NJTech News Update"
+DEFAULT_NEWS_TITLE = "NJTech Academic Affairs News"
 CACHE_FILE = Path("last_email_content.html")
 ENV_FILE = Path(".env")
+WEB_DIR = Path(__file__).resolve().parent / "web"
+HTML_TEMPLATE_FILE = WEB_DIR / "index.html"
+MJML_TEMPLATE_FILE = WEB_DIR / "index.mjml"
 
 
 @dataclass
@@ -72,6 +76,79 @@ def load_dotenv_file(file_path: Path, override: bool = False) -> None:
 
         if override or key not in os.environ:
             os.environ[key] = value
+
+
+def ensure_template_files() -> bool:
+    required_files = [HTML_TEMPLATE_FILE, MJML_TEMPLATE_FILE]
+    missing_files = [str(path) for path in required_files if not path.exists()]
+    if missing_files:
+        print(f"Missing template files: {', '.join(missing_files)}")
+        return False
+
+    template_content: dict[Path, str] = {}
+    empty_files: list[str] = []
+    for file_path in required_files:
+        try:
+            content = file_path.read_text(encoding="utf-8-sig")
+            template_content[file_path] = content
+            if not content.strip():
+                empty_files.append(str(file_path))
+        except OSError as exc:
+            print(f"Failed to read template file '{file_path}': {exc}")
+            return False
+
+    if empty_files:
+        print(f"Template files are empty: {', '.join(empty_files)}")
+        return False
+
+    required_tokens = ["{{NEWS_TITLE}}", "{{NEWS_ROWS}}", "{{SOURCE_URL}}"]
+    for file_path in required_files:
+        missing_tokens = [
+            token for token in required_tokens if token not in template_content[file_path]
+        ]
+        if missing_tokens:
+            print(
+                f"Template placeholders missing in '{file_path}': "
+                f"{', '.join(missing_tokens)}"
+            )
+            return False
+
+    return True
+
+
+def load_html_template() -> str | None:
+    try:
+        template = HTML_TEMPLATE_FILE.read_text(encoding="utf-8-sig")
+    except OSError as exc:
+        print(f"Failed to read HTML template '{HTML_TEMPLATE_FILE}': {exc}")
+        return None
+
+    required_tokens = ["{{NEWS_TITLE}}", "{{NEWS_ROWS}}", "{{SOURCE_URL}}"]
+    missing_tokens = [token for token in required_tokens if token not in template]
+    if missing_tokens:
+        print(
+            f"HTML template missing placeholders: {', '.join(missing_tokens)} "
+            f"(file: {HTML_TEMPLATE_FILE})"
+        )
+        return None
+
+    return template
+
+
+def render_email_content(news_rows: list[str], source_url: str) -> str | None:
+    template = load_html_template()
+    if template is None:
+        return None
+
+    replacements = {
+        "{{NEWS_TITLE}}": html.escape(DEFAULT_NEWS_TITLE),
+        "{{NEWS_ROWS}}": "".join(news_rows),
+        "{{SOURCE_URL}}": html.escape(source_url, quote=True),
+    }
+    for token, value in replacements.items():
+        template = template.replace(token, value)
+
+    return template
 
 
 def split_receivers(raw_value: str) -> list[str]:
@@ -164,45 +241,7 @@ def parse_content(page_html: str, source_url: str) -> str | None:
         print("No valid news rows were parsed.")
         return None
 
-    content = f"""
-    <html>
-    <head>
-        <style>
-            body {{ font-family: Arial, sans-serif; color: #333; background-color: #f4f4f9; margin: 0; padding: 20px; }}
-            h2 {{ color: #444; }}
-            table {{ width: 100%; border-collapse: collapse; margin-top: 20px; }}
-            th, td {{ border: 1px solid #ddd; padding: 12px 15px; text-align: left; }}
-            th {{ background-color: #f9f9f9; color: #555; }}
-            tr:nth-child(even) {{ background-color: #f2f2f2; }}
-            a {{ color: #3278b3; text-decoration: none; }}
-            a:hover {{ text-decoration: underline; }}
-            .footer {{ margin-top: 20px; font-size: 0.9em; text-align: center; color: #777; }}
-            @media only screen and (max-width: 600px) {{
-                body {{ padding: 10px; }}
-                table {{ font-size: 14px; }}
-                th, td {{ padding: 8px 10px; }}
-                h2 {{ font-size: 1.5em; }}
-                .footer {{ font-size: 0.8em; }}
-            }}
-        </style>
-    </head>
-    <body>
-        <h2>NJTech Academic Affairs News</h2>
-        <table>
-            <tr>
-                <th>Title</th>
-                <th>Date</th>
-            </tr>
-            {''.join(rows)}
-        </table>
-        <div class="footer">
-            <p>This email was sent automatically. Please do not reply directly.</p>
-            <p>Visit <a href="{html.escape(source_url, quote=True)}">source page</a> for more details.</p>
-        </div>
-    </body>
-    </html>
-    """
-    return content
+    return render_email_content(rows, source_url)
 
 
 def load_last_content(cache_path: Path) -> str:
@@ -247,6 +286,9 @@ def main() -> int:
         config = load_config_from_env()
     except (RuntimeError, ValueError) as exc:
         print(exc)
+        return 1
+
+    if not ensure_template_files():
         return 1
 
     page_html = fetch_html(config.source_url)

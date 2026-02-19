@@ -1,0 +1,47 @@
+<mjml>
+  <mj-head>
+    <mj-title>NJTech News Mail</mj-title>
+    <mj-attributes>
+      <mj-all font-family="Arial, sans-serif" />
+      <mj-text color="#333333" />
+      <mj-class name="muted" color="#777777" font-size="13px" />
+    </mj-attributes>
+    <mj-style inline="inline">
+      .news-table table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      .news-table th,
+      .news-table td {
+        border: 1px solid #dddddd;
+        padding: 10px 12px;
+        text-align: left;
+        vertical-align: top;
+      }
+      .news-table th {
+        background: #f9f9f9;
+        color: #555555;
+      }
+    </mj-style>
+  </mj-head>
+  <mj-body background-color="#f4f4f9">
+    <mj-section>
+      <mj-column>
+        <mj-text font-size="24px" font-weight="700" color="#444444">{{NEWS_TITLE}}</mj-text>
+        <mj-table css-class="news-table">
+          <tr>
+            <th>Title</th>
+            <th>Date</th>
+          </tr>
+          {{NEWS_ROWS}}
+        </mj-table>
+        <mj-text mj-class="muted" align="center">
+          This email was sent automatically. Please do not reply directly.
+        </mj-text>
+        <mj-text mj-class="muted" align="center">
+          Visit <a href="{{SOURCE_URL}}">source page</a> for more details.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

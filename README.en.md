@@ -7,7 +7,7 @@ Linux-only crawler + email notifier for NJTech news pages.
 ## What It Does
 - Crawls a target page (default: NJTech Academic Affairs announcements).
 - Parses list items from `ul.my-list` with date in `span.date`.
-- Builds an HTML email table.
+- Builds email rows and injects them into a standalone HTML template.
 - Sends updates via QQ SMTP (`smtp.qq.com:465`).
 - Skips duplicate sends when content is unchanged (`last_email_content.html` cache).
 
@@ -42,6 +42,16 @@ Template file:
 - Copy `.env.example` to `.env`, then fill your real values.
 - Script auto-loads `.env` if present.
 - Existing OS environment variables take priority over `.env` values.
+
+## Email Templates
+- Runtime HTML template: `web/index.html`
+- MJML source template: `web/index.mjml`
+- Required placeholders in `web/index.html`:
+  - `{{NEWS_TITLE}}`
+  - `{{NEWS_ROWS}}`
+  - `{{SOURCE_URL}}`
+
+If either template file is missing or empty, the script exits with an error.
 
 ## Run
 Recommended:

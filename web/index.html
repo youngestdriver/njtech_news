@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NJTech News Mail</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      color: #333;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 20px;
+    }
+    h2 {
+      color: #444;
+      margin-top: 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: #ffffff;
+    }
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 12px 15px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background-color: #f9f9f9;
+      color: #555;
+    }
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    a {
+      color: #3278b3;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .footer {
+      margin-top: 20px;
+      font-size: 0.9em;
+      text-align: center;
+      color: #777;
+    }
+    @media only screen and (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+      table {
+        font-size: 14px;
+      }
+      th,
+      td {
+        padding: 8px 10px;
+      }
+      h2 {
+        font-size: 1.5em;
+      }
+      .footer {
+        font-size: 0.8em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h2>{{NEWS_TITLE}}</h2>
+  <table>
+    <tr>
+      <th>Title</th>
+      <th>Date</th>
+    </tr>
+    {{NEWS_ROWS}}
+  </table>
+  <div class="footer">
+    <p>This email was sent automatically. Please do not reply directly.</p>
+    <p>Visit <a href="{{SOURCE_URL}}">source page</a> for more details.</p>
+  </div>
+</body>
+</html>

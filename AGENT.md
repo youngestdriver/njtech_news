@@ -12,7 +12,7 @@ Execution target is Linux only.
 - `web/index.mjml`: empty placeholder file.
 - `web/index.html`: empty placeholder file.
 
-Current repo has `requirements.txt` and `requirement.txt` (alias), but still no tests and no CI configuration.
+Current repo has `requirements.txt`, but still no tests and no CI configuration.
 
 ## Core Runtime Flow
 1. `fetch_html(url)`

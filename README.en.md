@@ -25,12 +25,6 @@ Install dependencies:
 python3 -m pip install -r requirements.txt
 ```
 
-Compatibility alias (also works):
-
-```bash
-python3 -m pip install -r requirement.txt
-```
-
 ## Configuration (Environment Variables)
 Required:
 - `NEWS_SENDER_EMAIL`: sender mailbox (for example: `xxx@qq.com`)

@@ -25,12 +25,6 @@
 python3 -m pip install -r requirements.txt
 ```
 
-兼容别名（同样可用）：
-
-```bash
-python3 -m pip install -r requirement.txt
-```
-
 ## 配置（环境变量）
 必填：
 - `NEWS_SENDER_EMAIL`：发件邮箱（例如：`xxx@qq.com`）

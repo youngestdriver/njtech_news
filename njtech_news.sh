@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from __future__ import annotations
+
 import html
 import os
 import smtplib
@@ -21,7 +23,11 @@ DEFAULT_SMTP_PORT = 465
 DEFAULT_SENDER_NAME = "NJTech News Bot"
 DEFAULT_SUBJECT = "NJTech News Update"
 DEFAULT_NEWS_TITLE = "NJTech Academic Affairs News"
-CACHE_FILE = Path("last_email_content.html")
+def _get_cache_path() -> Path:
+    cache_dir = os.getenv("NEWS_CACHE_DIR", "").strip()
+    if cache_dir:
+        return Path(cache_dir) / "last_email_content.html"
+    return Path("last_email_content.html")
 ENV_FILE = Path(".env")
 WEB_DIR = Path(__file__).resolve().parent / "web"
 HTML_TEMPLATE_FILE = WEB_DIR / "index.html"
@@ -251,11 +257,12 @@ def load_last_content(cache_path: Path) -> str:
 
 
 def save_last_content(cache_path: Path, content: str) -> None:
+    cache_path.parent.mkdir(parents=True, exist_ok=True)
     cache_path.write_text(content, encoding="utf-8")
 
 
 def send_email(content: str, config: MailConfig) -> bool:
-    last_content = load_last_content(CACHE_FILE)
+    last_content = load_last_content(_get_cache_path())
     if content == last_content:
         print("No content change detected. Skip sending email.")
         return True
@@ -271,7 +278,7 @@ def send_email(content: str, config: MailConfig) -> bool:
         with smtplib.SMTP_SSL(config.smtp_host, config.smtp_port, context=context) as smtp_obj:
             smtp_obj.login(config.sender_email, config.smtp_password)
             smtp_obj.sendmail(config.sender_email, config.receivers, message.as_string())
-        save_last_content(CACHE_FILE, content)
+        save_last_content(_get_cache_path(), content)
         print("Email sent successfully.")
         return True
     except smtplib.SMTPException as exc:

@@ -75,6 +75,42 @@ Environment-only mode (without `.env`) is supported:
 - export `NEWS_RECEIVERS`
 - run script
 
+## Docker Deployment
+
+### Build
+```bash
+docker build -t njtech-news .
+```
+
+### One-shot run
+```bash
+docker run --rm \
+  -e NEWS_SENDER_EMAIL=your_email@qq.com \
+  -e NEWS_SMTP_PASSWORD=your_auth_code \
+  -e NEWS_RECEIVERS=user@qq.com \
+  -v njtech-cache:/data \
+  njtech-news
+```
+
+### Run with docker compose
+Create `.env` in the project root (use `.env.example` as template), then:
+```bash
+docker compose run --rm njtech-news
+```
+
+### Volume reference
+| Mount point | Purpose |
+|---|---|
+| `/data` | Persist dedup cache |
+| `/app/web/index.html` | Override email template (optional) |
+| `/app/web/index.mjml` | Override MJML template (optional) |
+| `/app/.env` | Load config from file (optional) |
+
+### Docker cron
+```bash
+*/30 * * * * docker run --rm -v njtech-cache:/data --env-file /path/to/.env njtech-news
+```
+
 ## Scheduled Execution (cron)
 Example: run every 30 minutes.
 

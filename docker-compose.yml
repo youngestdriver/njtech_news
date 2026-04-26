@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  njtech-news:
+    build: .
+    container_name: njtech-news
+    environment:
+      # Required
+      - NEWS_SENDER_EMAIL=${NEWS_SENDER_EMAIL}
+      - NEWS_SMTP_PASSWORD=${NEWS_SMTP_PASSWORD}
+      - NEWS_RECEIVERS=${NEWS_RECEIVERS}
+      # Optional
+      - NEWS_SOURCE_URL=${NEWS_SOURCE_URL:-https://jwc.njtech.edu.cn/index/ggtz.htm}
+      - NEWS_SENDER_NAME=${NEWS_SENDER_NAME:-NJTech News Bot}
+      - NEWS_MAIL_SUBJECT=${NEWS_MAIL_SUBJECT:-NJTech News Update}
+      - NEWS_SMTP_HOST=${NEWS_SMTP_HOST:-smtp.qq.com}
+      - NEWS_SMTP_PORT=${NEWS_SMTP_PORT:-465}
+    volumes:
+      - njtech-cache:/data
+      # Uncomment to override templates:
+      # - ./web/index.html:/app/web/index.html:ro
+      # - ./web/index.mjml:/app/web/index.mjml:ro
+      # Uncomment to use .env file:
+      # - ./.env:/app/.env:ro
+
+volumes:
+  njtech-cache:

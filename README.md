@@ -75,6 +75,42 @@ chmod +x ./njtech_news.sh
 - `export NEWS_RECEIVERS`
 - 然后执行脚本
 
+## Docker 部署
+
+### 构建镜像
+```bash
+docker build -t njtech-news .
+```
+
+### 单次运行
+```bash
+docker run --rm \
+  -e NEWS_SENDER_EMAIL=your_email@qq.com \
+  -e NEWS_SMTP_PASSWORD=your_auth_code \
+  -e NEWS_RECEIVERS=user@qq.com \
+  -v njtech-cache:/data \
+  njtech-news
+```
+
+### 使用 docker compose
+在项目根目录创建 `.env`（参考 `.env.example`），然后：
+```bash
+docker compose run --rm njtech-news
+```
+
+### 卷挂载说明
+| 挂载点 | 用途 |
+|---|---|
+| `/data` | 持久化去重缓存 |
+| `/app/web/index.html` | 覆盖邮件模板（可选） |
+| `/app/web/index.mjml` | 覆盖 MJML 模板（可选） |
+| `/app/.env` | 通过文件加载环境变量（可选） |
+
+### Docker 环境下的定时执行
+```bash
+*/30 * * * * docker run --rm -v njtech-cache:/data --env-file /path/to/.env njtech-news
+```
+
 ## 定时执行（cron）
 示例：每 30 分钟执行一次。
 

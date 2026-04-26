@@ -1,0 +1,11 @@
+__pycache__/
+last_email_content.html
+.env
+.git/
+.gitignore
+*.md
+AGENT.md
+main.py
+docker-compose.yml
+Dockerfile
+.dockerignore

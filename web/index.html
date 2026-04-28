@@ -43,6 +43,9 @@
     a:hover {
       text-decoration: underline;
     }
+    .date-cell {
+      white-space: nowrap;
+    }
     .footer {
       margin-top: 20px;
       font-size: 0.9em;
@@ -74,7 +77,7 @@
   <table>
     <tr>
       <th>Title</th>
-      <th>Date</th>
+      <th class="date-cell">Date</th>
     </tr>
     {{NEWS_ROWS}}
   </table>

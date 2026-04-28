@@ -241,7 +241,7 @@ def parse_content(page_html: str, source_url: str) -> str | None:
         safe_title = html.escape(title)
         safe_date = html.escape(news_date)
         safe_url = html.escape(full_url, quote=True)
-        rows.append(f'<tr><td><a href="{safe_url}">{safe_title}</a></td><td>{safe_date}</td></tr>')
+        rows.append(f'<tr><td><a href="{safe_url}">{safe_title}</a></td><td class="date-cell">{safe_date}</td></tr>')
 
     if not rows:
         print("No valid news rows were parsed.")

@@ -29,7 +29,7 @@ docker compose up -d
 ```
 
 如需使用预构建镜像（无需本地编译），将 `docker-compose.yml` 中的 `build: .` 替换为 `image: papercranewillfly/njtech-news:latest`
-
+### docker compose示例
 ```yaml
 services:
   njtech-news:
@@ -42,7 +42,29 @@ services:
       - .env
     restart: unless-stopped
 ```
+### .env实例
+```env
+# SMTP 邮件配置（必填）
+NEWS_SENDER_EMAIL=your@email.com
+NEWS_SMTP_PASSWORD=your_smtp_password
 
+# SMTP 主机配置（可选，默认 QQ 邮箱）
+# NEWS_SMTP_HOST=smtp.qq.com
+# NEWS_SMTP_PORT=465
+
+# 邮件内容（可选）
+# NEWS_SENDER_NAME=NJTech News
+# NEWS_MAIL_SUBJECT=今日公告汇总
+
+# 爬取间隔（秒，可选，默认 300）
+# NEWS_CRAWL_INTERVAL=300
+
+# 数据库（可选，默认 SQLite）
+# NEWS_DATABASE_URL=sqlite+aiosqlite:////data/njtech.db
+
+# 应用公网地址（邮件中链接跳转用）
+# NEWS_BASE_URL=http://localhost:8000
+```
 支持 `linux/amd64` 和 `linux/arm64` 架构。
 
 ### 从源码部署

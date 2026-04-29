@@ -1,7 +1,7 @@
 # NJTech News
 
 <p align="center">
-  <img src="static/logo.png" width="128" alt="NJTech News">
+  <img src="static/logo.png" width="256" alt="NJTech News">
 </p>
 
 南京工业大学各学院/部门公告聚合服务。支持 Web 浏览、多数据源爬取、邮件订阅（学号+邮箱验证）。

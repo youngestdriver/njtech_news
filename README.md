@@ -1,7 +1,7 @@
 # NJTech News
 
 <p align="center">
-  <img src="static/logo.png" width="256" alt="NJTech News">
+  <img src="https://raw.githubusercontent.com/youngestdriver/njtech_news/refs/heads/main/static/logo.png" width="256" alt="NJTech News">
 </p>
 
 南京工业大学各学院/部门公告聚合服务。支持 Web 浏览、邮件订阅。

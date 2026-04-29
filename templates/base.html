@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}NJTech News{% endblock %}</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/htmx.org@2.0.4"></script>
 </head>
@@ -22,7 +25,8 @@
         {% block content %}{% endblock %}
     </main>
     <footer class="text-center text-gray-400 text-xs py-8">
-        NJTech News — 南京工业大学公告聚合
+        NJTech News — 南京工业大学公告聚合 ·
+        <a href="https://github.com/youngestdriver/njtech_news" target="_blank" rel="noopener" class="hover:text-indigo-500 underline">GitHub</a>
     </footer>
 </body>
 </html>

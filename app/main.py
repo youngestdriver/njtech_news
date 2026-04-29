@@ -32,9 +32,20 @@ async def load_sources_from_yaml(path: str = "sources.yaml"):
             existing = await session.execute(
                 select(Source).where(Source.url == src["url"])
             )
-            if existing.scalar_one_or_none():
-                continue
-            session.add(Source(**src))
+            row = existing.scalar_one_or_none()
+            if row:
+                # Update selectors in case YAML changed
+                for field in (
+                    "selector_container", "selector_item",
+                    "selector_title", "selector_link", "selector_date",
+                ):
+                    if field in src:
+                        setattr(row, field, src[field])
+                row.is_active = src.get("is_active", True)
+                row.name = src.get("name", row.name)
+                row.category = src.get("category", row.category)
+            else:
+                session.add(Source(**src))
         await session.commit()
 
 

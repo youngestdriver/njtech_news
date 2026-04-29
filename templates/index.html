@@ -37,9 +37,9 @@
 {% if page > 1 or articles|length == 20 %}
 <div class="flex justify-center mt-6 gap-4">
     {% if page > 1 %}
-    <a href="/?source_id={{ current_source or '' }}&page={{ page - 1 }}" class="text-sm text-indigo-600 hover:text-indigo-800">&larr; 上一页</a>
+    <a href="/?page={{ page - 1 }}{% if current_source %}&source_id={{ current_source }}{% endif %}" class="text-sm text-indigo-600 hover:text-indigo-800">&larr; 上一页</a>
     {% endif %}
-    <a href="/?source_id={{ current_source or '' }}&page={{ page + 1 }}" class="text-sm text-indigo-600 hover:text-indigo-800">下一页 &rarr;</a>
+    <a href="/?page={{ page + 1 }}{% if current_source %}&source_id={{ current_source }}{% endif %}" class="text-sm text-indigo-600 hover:text-indigo-800">下一页 &rarr;</a>
 </div>
 {% endif %}
 

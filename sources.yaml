@@ -7,21 +7,297 @@
 #   selector_link:      公告链接元素 (在 container 内)
 #   selector_date:      公告日期元素 (在 container 内)
 # 每个源取标题/链接/日期按索引一一对应
+#
+# HTML 结构分类:
+#   Type A1 (div.txt):      <div.txt > ul > li > a + span          — 化工等 12 个学院
+#   Type A2 (div.list):     <div.list > ul > li > a + span.date    — 能源、经管
+#   Type A3 (div.fy-list):  <div.fy-list > UL > li > span + a      — 环境 (日期在前)
+#   Type A4 (div.ct):       <div.ct > ul > li > a + span           — 法政、数理
+#   Type A5 (ul.list):      <ul.list > li > a > span               — 外国语 (日期在 a 内)
+#   Type B  (ul.news_list): <ul.news_list.list2 > li > span + a    — 建筑
+#   Type C  (UL.ss):        <UL.ss > li > a + span                 — 体育
+#   Type D  (a.right-li):   <div.right-list > a.right-li > div     — 土木 (a 标签作条目)
+#   Type E  (table):        <table > tr > td > a.listlinkt + font  — 化分、柔性电子
+#   Type F  (ul.my-list):   <ul.my-list > li > a + span.date       — 教务处
+
+## 部门
 
 - name: 教务处
   url: https://jwc.njtech.edu.cn/index/ggtz.htm
   category: 部门
   selector_container: ul.my-list
+  selector_item: li
   selector_title: a
   selector_link: a
   selector_date: span.date
   is_active: true
 
+## 学院 — Type A1: div.txt 容器
+
 - name: 化工
   url: https://hgy.njtech.edu.cn/index/tzgg.htm
   category: 学院
   selector_container: div.txt
+  selector_item: li
   selector_title: a
   selector_link: a
   selector_date: span
+  is_active: true
+
+- name: 安全科学与工程
+  url: https://cces.njtech.edu.cn/index/tz.htm
+  category: 学院
+  selector_container: div.txt
+  selector_item: li
+  selector_title: a
+  selector_link: a
+  selector_date: span
+  is_active: true
+
+- name: 应急管理
+  url: https://cem.njtech.edu.cn/index/tzgg.htm
+  category: 学院
+  selector_container: div.txt
+  selector_item: li
+  selector_title: a
+  selector_link: a
+  selector_date: span
+  is_active: true
+
+- name: 材料科学与工程
+  url: https://cly.njtech.edu.cn/index/tzgg.htm
+  category: 学院
+  selector_container: div.txt
+  selector_item: li
+  selector_title: a
+  selector_link: a
+  selector_date: span
+  is_active: true
+
+- name: 电气工程与控制科学
+  url: https://eecs.njtech.edu.cn/index/tzgg.htm
+  category: 学院
+  selector_container: div.txt
+  selector_item: li
+  selector_title: a
+  selector_link: a
+  selector_date: span
+  is_active: true
+
+- name: 机械与动力工程
+  url: https://mech.njtech.edu.cn/tzgg/bkjy.htm
+  category: 学院
+  selector_container: div.txt
+  selector_item: li
+  selector_title: a
+  selector_link: a
+  selector_date: span
+  is_active: true
+
+- name: 药学
+  url: https://pharm.njtech.edu.cn/index/tzgg.htm
+  category: 学院
+  selector_container: div.txt
+  selector_item: li
+  selector_title: a
+  selector_link: a
+  selector_date: span
+  is_active: true
+
+- name: 艺术设计
+  url: https://art.njtech.edu.cn/index/xytz.htm
+  category: 学院
+  selector_container: div.txt
+  selector_item: li
+  selector_title: a
+  selector_link: a
+  selector_date: span
+  is_active: true
+
+- name: 生物与制药工程
+  url: https://sgxy.njtech.edu.cn/index/tzgg.htm
+  category: 学院
+  selector_container: div.txt
+  selector_item: li
+  selector_title: a
+  selector_link: a
+  selector_date: span
+  is_active: true
+
+- name: 食品与轻工
+  url: https://spy.njtech.edu.cn/index/tzgg.htm
+  category: 学院
+  selector_container: div.txt
+  selector_item: li
+  selector_title: a
+  selector_link: a
+  selector_date: span
+  is_active: true
+
+- name: 计算机科学与技术
+  url: https://cise.njtech.edu.cn/index/tzgg.htm
+  category: 学院
+  selector_container: div.txt
+  selector_item: li
+  selector_title: a
+  selector_link: a
+  selector_date: span
+  is_active: true
+
+- name: 测绘科学与技术
+  url: https://cge.njtech.edu.cn/index/tzgg.htm
+  category: 学院
+  selector_container: div.txt
+  selector_item: li
+  selector_title: a
+  selector_link: a
+  selector_date: span
+  is_active: true
+
+- name: 城市建设
+  url: https://csjsxy.njtech.edu.cn/index/tzgg.htm
+  category: 学院
+  selector_container: div.txt
+  selector_item: li
+  selector_title: a
+  selector_link: a
+  selector_date: span
+  is_active: true
+
+## 学院 — Type A2: div.list 容器 (span.date)
+
+- name: 能源科学与工程
+  url: https://ny.njtech.edu.cn/index/tz.htm
+  category: 学院
+  selector_container: div.list
+  selector_item: li
+  selector_title: a
+  selector_link: a
+  selector_date: span.date
+  is_active: true
+
+- name: 经济与管理
+  url: https://jgy.njtech.edu.cn/index/tzgg.htm
+  category: 学院
+  selector_container: div.list
+  selector_item: li
+  selector_title: a
+  selector_link: a
+  selector_date: span.date
+  is_active: true
+
+## 学院 — Type A3: div.fy-list 容器 (日期在链接前)
+
+- name: 环境科学与工程
+  url: https://hj.njtech.edu.cn/index/tzgg.htm
+  category: 学院
+  selector_container: div.fy-list
+  selector_item: li
+  selector_title: a
+  selector_link: a
+  selector_date: span
+  is_active: true
+
+## 学院 — Type A4: div.ct 容器
+
+- name: 法政
+  url: https://fzxy.njtech.edu.cn/index/tzgg.htm
+  category: 学院
+  selector_container: div.ct
+  selector_item: li
+  selector_title: a
+  selector_link: a
+  selector_date: span
+  is_active: true
+
+- name: 数理科学
+  url: https://lxy.njtech.edu.cn/index/tzgg.htm
+  category: 学院
+  selector_container: div.ct
+  selector_item: li
+  selector_title: a
+  selector_link: a
+  selector_date: span
+  is_active: true
+
+## 学院 — Type A5: ul.list 容器 (日期在 a 标签内)
+
+- name: 外国语
+  url: https://english.njtech.edu.cn/index/tzgg.htm
+  category: 学院
+  selector_container: ul.list
+  selector_item: li
+  selector_title: a
+  selector_link: a
+  selector_date: span
+  is_active: true
+
+## 学院 — Type A-other: 非标准 div 容器
+
+- name: 交通
+  url: https://trans.njtech.edu.cn/index/tzgg.htm
+  category: 学院
+  selector_container: div.main_conR
+  selector_item: li
+  selector_title: a
+  selector_link: a
+  selector_date: span
+  is_active: true
+
+## 学院 — Type B: ul.news_list 容器 (建筑)
+
+- name: 建筑
+  url: https://arch.njtech.edu.cn/index/wzgg.htm
+  category: 学院
+  selector_container: ul.news_list.list2
+  selector_item: li
+  selector_title: a
+  selector_link: a
+  selector_date: span.news_meta
+  is_active: true
+
+## 学院 — Type C: UL.ss 容器 (体育)
+
+- name: 体育
+  url: https://tyxy.njtech.edu.cn/index/tong_zhi_gong.htm
+  category: 学院
+  selector_container: UL.ss
+  selector_item: li
+  selector_title: a
+  selector_link: a
+  selector_date: span
+  is_active: true
+
+## 学院 — Type D: a.right-li 条目容器 (土木)
+
+- name: 土木工程
+  url: https://cce.njtech.edu.cn/xwxx/tzgg.htm
+  category: 学院
+  selector_container: div.right-list
+  selector_item: a.right-li
+  selector_title: div.right-li-title
+  selector_link: a.right-li
+  selector_date: div.right-li-date
+  is_active: true
+
+## 学院 — Type E: table/tr 表格布局 (使用 tr 作为条目)
+
+- name: 化学与分子工程
+  url: https://chem.njtech.edu.cn/index/tzgg.htm
+  category: 学院
+  selector_container: table
+  selector_item: tr
+  selector_title: a.listlinkt
+  selector_link: a.listlinkt
+  selector_date: font
+  is_active: true
+
+- name: 柔性电子（未来技术）
+  url: https://iam.njtech.edu.cn/tzgg/ywgg.htm
+  category: 学院
+  selector_container: table
+  selector_item: tr
+  selector_title: a.listlinkt
+  selector_link: a.listlinkt
+  selector_date: font
   is_active: true

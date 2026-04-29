@@ -15,6 +15,7 @@ class Source(Base):
     url: Mapped[str] = mapped_column(String(500), nullable=False)
     category: Mapped[str] = mapped_column(String(100), default="学院")
     selector_container: Mapped[str] = mapped_column(String(500), nullable=False)
+    selector_item: Mapped[str | None] = mapped_column(String(500), nullable=True)
     selector_title: Mapped[str] = mapped_column(String(500), nullable=False)
     selector_link: Mapped[str] = mapped_column(String(500), nullable=False)
     selector_date: Mapped[str] = mapped_column(String(500), nullable=False)

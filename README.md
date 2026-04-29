@@ -4,17 +4,17 @@
   <img src="static/logo.png" width="256" alt="NJTech News">
 </p>
 
-南京工业大学各学院/部门公告聚合服务。支持 Web 浏览、多数据源爬取、邮件订阅（学号+邮箱验证）。
+南京工业大学各学院/部门公告聚合服务。支持 Web 浏览、邮件订阅。
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/papercranewillfly/njtech-news)](https://hub.docker.com/r/papercranewillfly/njtech-news)
 [![Build](https://github.com/youngestdriver/njtech_news/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/youngestdriver/njtech_news/actions)
 
 ## 功能
 
-- **公告聚合** — 从各学院/部门网站抓取公告，统一展示（26 个数据源）
+- **公告聚合** — 从各学院/部门网站抓取公告，统一展示
 - **邮件订阅** — 绑定学号+邮箱，验证码确认，可选择关注的数据源
 - **定时推送** — 按可配置的间隔自动爬取并推送新公告到订阅邮箱
-- **订阅管理** — 通过 token 链接修改关注范围或退订
+- **订阅管理** — 在邮件底部链接修改关注范围或退订
 
 ## 快速开始
 
@@ -28,10 +28,19 @@ cp .env.example .env
 docker compose up -d
 ```
 
-如需使用预构建镜像（无需本地编译），将 `docker-compose.yml` 中的 `build: .` 替换为：
+如需使用预构建镜像（无需本地编译），将 `docker-compose.yml` 中的 `build: .` 替换为 `image: papercranewillfly/njtech-news:latest`
 
 ```yaml
-image: papercranewillfly/njtech-news:latest
+services:
+  njtech-news:
+    image: papercranewillfly/njtech-news:latest
+    ports:
+      - 8000:8000
+    volumes:
+      - ./data:/data
+    env_file:
+      - .env
+    restart: unless-stopped
 ```
 
 支持 `linux/amd64` 和 `linux/arm64` 架构。

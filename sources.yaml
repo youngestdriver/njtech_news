@@ -1,0 +1,27 @@
+# 南京工业大学各学院/部门公告数据源配置
+# 选择器语法为 CSS selector，用于 BeautifulSoup 解析
+#
+# 支持的选择器字段:
+#   selector_container: 包含公告列表的容器元素
+#   selector_title:     公告标题元素 (在 container 内)
+#   selector_link:      公告链接元素 (在 container 内)
+#   selector_date:      公告日期元素 (在 container 内)
+# 每个源取标题/链接/日期按索引一一对应
+
+- name: 教务处
+  url: https://jwc.njtech.edu.cn/index/ggtz.htm
+  category: 部门
+  selector_container: ul.my-list
+  selector_title: a
+  selector_link: a
+  selector_date: span.date
+  is_active: true
+
+- name: 化工
+  url: https://hgy.njtech.edu.cn/index/tzgg.htm
+  category: 学院
+  selector_container: div.txt
+  selector_title: a
+  selector_link: a
+  selector_date: span
+  is_active: true

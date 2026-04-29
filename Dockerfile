@@ -1,15 +1,14 @@
-FROM python:3.10-slim
+FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install Python dependencies first (layer caching)
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code and templates
-COPY njtech_news.sh .
-COPY web/ ./web/
+COPY . .
 
-ENV NEWS_CACHE_DIR=/data
+RUN mkdir -p /data
+ENV NEWS_DATABASE_URL=sqlite+aiosqlite:////data/njtech.db
 
-CMD ["python", "njtech_news.sh"]
+EXPOSE 8000
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

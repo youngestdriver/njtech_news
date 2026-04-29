@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}数据源 — NJTech News{% endblock %}
+{% block content %}
+
+<h1 class="text-2xl font-semibold text-gray-800 mb-6">数据源</h1>
+
+{% if sources %}
+<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {% for s in sources %}
+    <div class="bg-white border border-gray-200 rounded-lg p-4">
+        <div class="text-xs text-indigo-500 font-medium uppercase tracking-wide">{{ s.category }}</div>
+        <div class="font-medium text-gray-800 mt-1">{{ s.name }}</div>
+        <a href="{{ s.url }}" target="_blank" rel="noopener" class="text-xs text-gray-400 hover:text-indigo-500 truncate block mt-1">{{ s.url }}</a>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-16 text-gray-400">
+    <p>暂无已配置的数据源</p>
+</div>
+{% endif %}
+
+{% endblock %}

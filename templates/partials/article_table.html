@@ -1,0 +1,33 @@
+{% if articles %}
+<ul class="space-y-3">
+    {% for a in articles %}
+    <li class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
+        <div class="flex items-start justify-between gap-2">
+            <a href="{{ a.url }}" target="_blank" rel="noopener" class="text-indigo-700 hover:text-indigo-500 font-medium flex-1">
+                {{ a.title }}
+            </a>
+            {% if a.publish_date %}
+            <span class="text-gray-400 text-xs whitespace-nowrap">{{ a.publish_date }}</span>
+            {% endif %}
+        </div>
+        <div class="text-xs text-gray-400 mt-1">{{ source_map.get(a.source_id, '') }}</div>
+    </li>
+    {% endfor %}
+</ul>
+
+{% if page > 1 or articles|length == 20 %}
+<div class="flex justify-center mt-6 gap-4" hx-target="#article-list" hx-swap="outerHTML">
+    {% if page > 1 %}
+    <button hx-get="/?source_id={{ current_source or '' }}&page={{ page - 1 }}&hx-request=1"
+            class="text-sm text-indigo-600 hover:text-indigo-800">&larr; 上一页</button>
+    {% endif %}
+    <button hx-get="/?source_id={{ current_source or '' }}&page={{ page + 1 }}&hx-request=1"
+            class="text-sm text-indigo-600 hover:text-indigo-800">下一页 &rarr;</button>
+</div>
+{% endif %}
+
+{% else %}
+<div class="text-center py-16 text-gray-400">
+    <p class="text-lg">暂无公告</p>
+</div>
+{% endif %}

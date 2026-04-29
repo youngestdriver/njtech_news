@@ -1,3 +1,5 @@
-__pycache__
-last_email_content.html
+__pycache__/
+*.py[cod]
 .env
+data/
+*.db

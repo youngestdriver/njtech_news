@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}NJTech News{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <nav class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="/" class="text-xl font-bold text-indigo-700">NJTech News</a>
+            <div class="flex gap-4 text-sm">
+                <a href="/" class="text-gray-600 hover:text-indigo-600">公告</a>
+                <a href="/sources" class="text-gray-600 hover:text-indigo-600">数据源</a>
+                <a href="/subscribe" class="text-gray-600 hover:text-indigo-600">订阅</a>
+            </div>
+        </div>
+    </nav>
+    <main class="max-w-5xl mx-auto px-4 py-6">
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="text-center text-gray-400 text-xs py-8">
+        NJTech News — 南京工业大学公告聚合
+    </footer>
+</body>
+</html>

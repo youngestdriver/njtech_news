@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>公告摘要</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f3f4f6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f3f4f6;padding:20px 0;">
+        <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:8px;overflow:hidden;">
+                    <tr>
+                        <td style="background-color:#4f46e5;padding:24px 30px;">
+                            <h1 style="color:#ffffff;font-size:20px;margin:0;">NJTech News — 今日公告摘要</h1>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:24px 30px;">
+                            {% if articles %}
+                            <p style="color:#6b7280;font-size:14px;margin:0 0 16px 0;">您好，以下是您关注的学院/部门今日公告：</p>
+                            <ul style="list-style:none;padding:0;margin:0;">
+                                {% for a in articles %}
+                                <li style="padding:12px 0;border-bottom:1px solid #f3f4f6;">
+                                    <a href="{{ a.url }}" style="color:#4338ca;text-decoration:none;font-size:15px;font-weight:500;">{{ a.title }}</a>
+                                    <div style="margin-top:4px;">
+                                        {% if a.source_name %}<span style="color:#9ca3af;font-size:12px;">{{ a.source_name }}</span>{% endif %}
+                                        {% if a.publish_date %}<span style="color:#d1d5db;font-size:12px;margin-left:8px;">{{ a.publish_date }}</span>{% endif %}
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            {% else %}
+                            <p style="color:#6b7280;font-size:14px;margin:0;">今日暂无新公告。</p>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="background-color:#f9fafb;padding:16px 30px;text-align:center;">
+                            <a href="{{ manage_url }}" style="color:#4f46e5;font-size:12px;text-decoration:none;">管理订阅</a>
+                            <span style="color:#d1d5db;font-size:12px;margin:0 8px;">|</span>
+                            <a href="{{ unsubscribe_url }}" style="color:#9ca3af;font-size:12px;text-decoration:none;">退订</a>
+                            <span style="color:#d1d5db;font-size:12px;margin:0 8px;">|</span>
+                            <a href="{{ base_url }}" style="color:#9ca3af;font-size:12px;text-decoration:none;">NJTech News</a>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

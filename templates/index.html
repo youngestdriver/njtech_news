@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}NJTech News — 最新公告{% endblock %}
+{% block content %}
+
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+    <h1 class="text-2xl font-semibold text-gray-800">最新公告</h1>
+    <form method="get" action="/" class="flex gap-2">
+        <select name="source_id" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-300 focus:border-indigo-500">
+            <option value="0">全部来源</option>
+            {% for s in sources %}
+            <option value="{{ s.id }}" {% if current_source == s.id %}selected{% endif %}>{{ s.name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700 transition">
+            筛选
+        </button>
+    </form>
+</div>
+
+{% if articles %}
+<ul class="space-y-3" id="article-list">
+    {% for a in articles %}
+    <li class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
+        <div class="flex items-start justify-between gap-2">
+            <a href="{{ a.url }}" target="_blank" rel="noopener" class="text-indigo-700 hover:text-indigo-500 font-medium flex-1">
+                {{ a.title }}
+            </a>
+            {% if a.publish_date %}
+            <span class="text-gray-400 text-xs whitespace-nowrap">{{ a.publish_date }}</span>
+            {% endif %}
+        </div>
+        <div class="text-xs text-gray-400 mt-1">{{ source_map.get(a.source_id, '') }}</div>
+    </li>
+    {% endfor %}
+</ul>
+
+{% if page > 1 or articles|length == 20 %}
+<div class="flex justify-center mt-6 gap-4">
+    {% if page > 1 %}
+    <a href="/?source_id={{ current_source or '' }}&page={{ page - 1 }}" class="text-sm text-indigo-600 hover:text-indigo-800">&larr; 上一页</a>
+    {% endif %}
+    <a href="/?source_id={{ current_source or '' }}&page={{ page + 1 }}" class="text-sm text-indigo-600 hover:text-indigo-800">下一页 &rarr;</a>
+</div>
+{% endif %}
+
+{% else %}
+<div class="text-center py-16 text-gray-400">
+    <p class="text-lg">暂无公告</p>
+    <p class="text-sm mt-2">数据源爬取后公告将在此显示</p>
+</div>
+{% endif %}
+
+{% endblock %}

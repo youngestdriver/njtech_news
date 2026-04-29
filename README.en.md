@@ -1,10 +1,17 @@
 # NJTech News
 
-Announcement aggregation service for Nanjing Tech University (NJTech). Aggregates notices from college/department websites with web browsing and email subscription.
+<p align="center">
+  <img src="static/logo.png" width="128" alt="NJTech News">
+</p>
+
+Announcement aggregation service for Nanjing Tech University (NJTech). Scrapes notices from 26 college/department websites with web browsing and email subscription.
+
+[![Docker Pulls](https://img.shields.io/docker/pulls/papercranewillfly/njtech-news)](https://hub.docker.com/r/papercranewillfly/njtech-news)
+[![Build](https://github.com/youngestdriver/njtech_news/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/youngestdriver/njtech_news/actions)
 
 ## Features
 
-- **Announcement Aggregation** — Scrapes notices from multiple department websites into one place
+- **Announcement Aggregation** — Scrapes notices from 26 department websites into one place
 - **Email Subscription** — Student ID + email binding with verification code, selectable sources
 - **Scheduled Push** — Configurable interval for crawling and email delivery
 - **Subscription Management** — Token-based link to modify sources or unsubscribe
@@ -14,25 +21,32 @@ Announcement aggregation service for Nanjing Tech University (NJTech). Aggregate
 ### Docker
 
 ```bash
-git clone https://github.com/youngestdriver/njtech_news.git
-cd njtech_news
+# Pull from Docker Hub
+docker pull papercranewillfly/njtech-news:latest
 
+# Prepare environment
 cp .env.example .env
 # Fill in NEWS_SENDER_EMAIL and NEWS_SMTP_PASSWORD
 
+# Use docker compose
+wget https://raw.githubusercontent.com/youngestdriver/njtech_news/main/docker-compose.yml
 docker compose up -d
 ```
 
-Visit http://localhost:8000
+Supports `linux/amd64` and `linux/arm64` architectures.
 
-### Manual
+### From Source
 
 ```bash
+git clone https://github.com/youngestdriver/njtech_news.git
+cd njtech_news
 pip install -r requirements.txt
 cp .env.example .env
 # Fill in required environment variables
 uvicorn app.main:app --reload
 ```
+
+Visit http://localhost:8000
 
 ## Configuration
 
@@ -64,6 +78,7 @@ Sources are managed in `sources.yaml`.
 │       ├── scheduler.py # Task scheduler
 │       └── mailer.py    # Email delivery
 ├── templates/           # Jinja2 templates
+├── static/              # Static assets
 ├── sources.yaml         # Source definitions
 ├── docker-compose.yml
 └── Dockerfile

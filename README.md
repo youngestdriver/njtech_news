@@ -1,10 +1,17 @@
 # NJTech News
 
+<p align="center">
+  <img src="static/logo.png" width="128" alt="NJTech News">
+</p>
+
 南京工业大学各学院/部门公告聚合服务。支持 Web 浏览、多数据源爬取、邮件订阅（学号+邮箱验证）。
+
+[![Docker Pulls](https://img.shields.io/docker/pulls/papercranewillfly/njtech-news)](https://hub.docker.com/r/papercranewillfly/njtech-news)
+[![Build](https://github.com/youngestdriver/njtech_news/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/youngestdriver/njtech_news/actions)
 
 ## 功能
 
-- **公告聚合** — 从各学院/部门网站抓取公告，统一展示
+- **公告聚合** — 从各学院/部门网站抓取公告，统一展示（26 个数据源）
 - **邮件订阅** — 绑定学号+邮箱，验证码确认，可选择关注的数据源
 - **定时推送** — 按可配置的间隔自动爬取并推送新公告到订阅邮箱
 - **订阅管理** — 通过 token 链接修改关注范围或退订
@@ -14,26 +21,32 @@
 ### Docker 部署
 
 ```bash
-git clone https://github.com/youngestdriver/njtech_news.git
-cd njtech_news
+# 从 Docker Hub 拉取
+docker pull papercranewillfly/njtech-news:latest
 
-# 编辑环境变量
+# 准备 .env 文件
 cp .env.example .env
 # 填入 NEWS_SENDER_EMAIL 和 NEWS_SMTP_PASSWORD
 
+# 使用 docker compose
+wget https://raw.githubusercontent.com/youngestdriver/njtech_news/main/docker-compose.yml
 docker compose up -d
 ```
 
-访问 http://localhost:8000
+支持 `linux/amd64` 和 `linux/arm64` 架构。
 
-### 手动部署
+### 从源码部署
 
 ```bash
+git clone https://github.com/youngestdriver/njtech_news.git
+cd njtech_news
 pip install -r requirements.txt
 cp .env.example .env
 # 填入必要的环境变量
 uvicorn app.main:app --reload
 ```
+
+访问 http://localhost:8000
 
 ## 配置
 
@@ -65,6 +78,7 @@ uvicorn app.main:app --reload
 │       ├── scheduler.py # 定时调度
 │       └── mailer.py    # 邮件发送
 ├── templates/           # Jinja2 模板
+├── static/              # 静态资源
 ├── sources.yaml         # 数据源配置
 ├── docker-compose.yml
 └── Dockerfile

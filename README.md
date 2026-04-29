@@ -21,16 +21,17 @@
 ### Docker 部署
 
 ```bash
-# 从 Docker Hub 拉取
-docker pull papercranewillfly/njtech-news:latest
-
-# 准备 .env 文件
+git clone https://github.com/youngestdriver/njtech_news.git
+cd njtech_news
 cp .env.example .env
-# 填入 NEWS_SENDER_EMAIL 和 NEWS_SMTP_PASSWORD
-
-# 使用 docker compose
-wget https://raw.githubusercontent.com/youngestdriver/njtech_news/main/docker-compose.yml
+# 编辑 .env，填入 NEWS_SENDER_EMAIL 和 NEWS_SMTP_PASSWORD
 docker compose up -d
+```
+
+如需使用预构建镜像（无需本地编译），将 `docker-compose.yml` 中的 `build: .` 替换为：
+
+```yaml
+image: papercranewillfly/njtech-news:latest
 ```
 
 支持 `linux/amd64` 和 `linux/arm64` 架构。

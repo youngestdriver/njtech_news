@@ -21,16 +21,17 @@ Announcement aggregation service for Nanjing Tech University (NJTech). Scrapes n
 ### Docker
 
 ```bash
-# Pull from Docker Hub
-docker pull papercranewillfly/njtech-news:latest
-
-# Prepare environment
+git clone https://github.com/youngestdriver/njtech_news.git
+cd njtech_news
 cp .env.example .env
-# Fill in NEWS_SENDER_EMAIL and NEWS_SMTP_PASSWORD
-
-# Use docker compose
-wget https://raw.githubusercontent.com/youngestdriver/njtech_news/main/docker-compose.yml
+# Edit .env with NEWS_SENDER_EMAIL and NEWS_SMTP_PASSWORD
 docker compose up -d
+```
+
+To use the pre-built image (skip local build), replace `build: .` in `docker-compose.yml` with:
+
+```yaml
+image: papercranewillfly/njtech-news:latest
 ```
 
 Supports `linux/amd64` and `linux/arm64` architectures.

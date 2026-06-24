@@ -32,6 +32,7 @@ async def get_articles_page(
     async with database.async_session() as session:
         q = (
             select(Article)
+            .where(Article.is_deleted == False)
             .order_by(Article.publish_date.desc().nullslast(), Article.created_at.desc())
         )
         if source_id:

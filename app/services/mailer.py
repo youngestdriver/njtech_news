@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from smtplib import SMTP_SSL
@@ -16,6 +17,8 @@ env = Environment(loader=FileSystemLoader("templates"))
 def render_mail_template(
     subscriber_name: str,
     articles: list[dict],
+    modified_articles: list[dict],
+    deleted_articles: list[dict],
     manage_url: str,
     unsubscribe_url: str,
     base_url: str,
@@ -24,6 +27,8 @@ def render_mail_template(
     return template.render(
         subscriber_name=subscriber_name,
         articles=articles,
+        modified_articles=modified_articles,
+        deleted_articles=deleted_articles,
         manage_url=manage_url,
         unsubscribe_url=unsubscribe_url,
         base_url=base_url,
@@ -65,7 +70,7 @@ async def send_verification_code(
 async def send_digest_to_subscriber(
     settings: Settings, subscriber_id: int, article_ids: list[int]
 ) -> bool:
-    """给单个订阅者发送摘要邮件"""
+    """给单个订阅者发送摘要邮件（包含新增、修改、删除）"""
     async with database.async_session() as session:
         subscriber_result = await session.execute(
             select(Subscriber.email, Subscriber.unsubscribe_token).where(
@@ -78,27 +83,69 @@ async def send_digest_to_subscriber(
 
         email, token = sub[0], sub[1]
 
-        # 获取文章详情
+        # 获取该订阅者关注的数据源
+        sub_sources = await session.execute(
+            select(Subscribe.source_id).where(Subscribe.subscriber_id == subscriber_id)
+        )
+        source_ids = [row[0] for row in sub_sources.all()]
+
+        # 1) 新增文章
         if article_ids:
             articles_result = await session.execute(
                 select(Article, Source.name).join(Source).where(
                     Article.id.in_(article_ids)
                 ).order_by(Article.created_at.desc())
             )
-            articles_data = []
-            for a, src_name in articles_result:
-                articles_data.append({
-                    "title": a.title,
-                    "url": a.url,
-                    "source_name": src_name,
-                    "publish_date": a.publish_date or "",
-                })
+            articles_data = [
+                {"title": a.title, "url": a.url, "source_name": src_name,
+                 "publish_date": a.publish_date or ""}
+                for a, src_name in articles_result
+            ]
         else:
             articles_data = []
 
+        # 2) 最近修改的文章（24h 内，来自关注源）
+        cutoff_24h = datetime.now() - timedelta(hours=24)
+        if source_ids:
+            modified_result = await session.execute(
+                select(Article, Source.name).join(Source).where(
+                    Article.source_id.in_(source_ids),
+                    Article.is_modified == True,
+                    Article.modified_at >= cutoff_24h,
+                ).order_by(Article.modified_at.desc())
+            )
+            modified_data = [
+                {"title": a.title, "previous_title": a.previous_title or "",
+                 "url": a.url, "source_name": src_name,
+                 "publish_date": a.publish_date or ""}
+                for a, src_name in modified_result
+            ]
+        else:
+            modified_data = []
+
+        # 3) 最近删除的文章（24h 内，来自关注源）
+        if source_ids:
+            deleted_result = await session.execute(
+                select(Article, Source.name).join(Source).where(
+                    Article.source_id.in_(source_ids),
+                    Article.is_deleted == True,
+                    Article.deleted_at >= cutoff_24h,
+                ).order_by(Article.deleted_at.desc())
+            )
+            deleted_data = [
+                {"title": a.title, "url": a.url, "source_name": src_name,
+                 "publish_date": a.publish_date or ""}
+                for a, src_name in deleted_result
+            ]
+        else:
+            deleted_data = []
+
         unsubscribe_url = f"{settings.base_url}/unsubscribe?token={token}"
         manage_url = f"{settings.base_url}/subscribe/manage?token={token}"
-        html = render_mail_template(email, articles_data, manage_url, unsubscribe_url, settings.base_url)
+        html = render_mail_template(
+            email, articles_data, modified_data, deleted_data,
+            manage_url, unsubscribe_url, settings.base_url,
+        )
 
         msg = MIMEMultipart("alternative")
         msg["Subject"] = settings.mail_subject
@@ -113,6 +160,21 @@ async def send_digest_to_subscriber(
 
             for aid in article_ids:
                 session.add(EmailLog(subscriber_id=subscriber_id, article_id=aid, status="success"))
+            # 同时记录修改和删除的文章
+            for a in modified_data:
+                modified_article = await session.execute(
+                    select(Article).where(Article.url == a["url"])
+                )
+                ma = modified_article.scalar_one_or_none()
+                if ma:
+                    session.add(EmailLog(subscriber_id=subscriber_id, article_id=ma.id, status="success"))
+            for a in deleted_data:
+                deleted_article = await session.execute(
+                    select(Article).where(Article.url == a["url"])
+                )
+                da = deleted_article.scalar_one_or_none()
+                if da:
+                    session.add(EmailLog(subscriber_id=subscriber_id, article_id=da.id, status="success"))
             await session.commit()
             return True
         except Exception:

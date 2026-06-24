@@ -17,8 +17,9 @@
                     </tr>
                     <tr>
                         <td style="padding:24px 30px;">
+                            {% if articles or modified_articles or deleted_articles %}
+                            <p style="color:#6b7280;font-size:14px;margin:0 0 16px 0;">您好，以下是您关注的学院/部门最新动态：</p>
                             {% if articles %}
-                            <p style="color:#6b7280;font-size:14px;margin:0 0 16px 0;">您好，以下是您关注的学院/部门今日公告：</p>
                             <ul style="list-style:none;padding:0;margin:0;">
                                 {% for a in articles %}
                                 <li style="padding:12px 0;border-bottom:1px solid #f3f4f6;">
@@ -30,8 +31,40 @@
                                 </li>
                                 {% endfor %}
                             </ul>
+                            {% endif %}
+                            {% if modified_articles %}
+                            <h2 style="color:#d97706;font-size:16px;margin:20px 0 12px 0;">&#x26A0; 标题已修改的公告</h2>
+                            <ul style="list-style:none;padding:0;margin:0;">
+                                {% for a in modified_articles %}
+                                <li style="padding:10px 0;border-bottom:1px solid #fef3c7;">
+                                    <a href="{{ a.url }}" style="color:#92400e;text-decoration:none;font-size:14px;font-weight:500;">{{ a.title }}</a>
+                                    <div style="margin-top:2px;">
+                                        <span style="color:#9ca3af;font-size:11px;">原标题：{{ a.previous_title }}</span>
+                                    </div>
+                                    <div style="margin-top:2px;">
+                                        {% if a.source_name %}<span style="color:#9ca3af;font-size:12px;">{{ a.source_name }}</span>{% endif %}
+                                        {% if a.publish_date %}<span style="color:#d1d5db;font-size:12px;margin-left:8px;">{{ a.publish_date }}</span>{% endif %}
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                            {% if deleted_articles %}
+                            <h2 style="color:#dc2626;font-size:16px;margin:20px 0 12px 0;">&#x274C; 已删除的公告</h2>
+                            <ul style="list-style:none;padding:0;margin:0;">
+                                {% for a in deleted_articles %}
+                                <li style="padding:10px 0;border-bottom:1px solid #fee2e2;">
+                                    <span style="color:#991b1b;text-decoration:line-through;font-size:14px;">{{ a.title }}</span>
+                                    <div style="margin-top:2px;">
+                                        {% if a.source_name %}<span style="color:#9ca3af;font-size:12px;">{{ a.source_name }}</span>{% endif %}
+                                        {% if a.publish_date %}<span style="color:#d1d5db;font-size:12px;margin-left:8px;">{{ a.publish_date }}</span>{% endif %}
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
                             {% else %}
-                            <p style="color:#6b7280;font-size:14px;margin:0;">今日暂无新公告。</p>
+                            <p style="color:#6b7280;font-size:14px;margin:0;">今日暂无更新。</p>
                             {% endif %}
                         </td>
                     </tr>

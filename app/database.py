@@ -30,6 +30,48 @@ async def init_db(settings: Settings):
         except Exception:
             pass  # Column already exists
 
+        # Add modification/deletion tracking columns
+        try:
+            await conn.run_sync(
+                lambda c: c.exec_driver_sql(
+                    "ALTER TABLE articles ADD COLUMN is_modified BOOLEAN DEFAULT 0"
+                )
+            )
+        except Exception:
+            pass
+        try:
+            await conn.run_sync(
+                lambda c: c.exec_driver_sql(
+                    "ALTER TABLE articles ADD COLUMN previous_title VARCHAR(500)"
+                )
+            )
+        except Exception:
+            pass
+        try:
+            await conn.run_sync(
+                lambda c: c.exec_driver_sql(
+                    "ALTER TABLE articles ADD COLUMN modified_at DATETIME"
+                )
+            )
+        except Exception:
+            pass
+        try:
+            await conn.run_sync(
+                lambda c: c.exec_driver_sql(
+                    "ALTER TABLE articles ADD COLUMN is_deleted BOOLEAN DEFAULT 0"
+                )
+            )
+        except Exception:
+            pass
+        try:
+            await conn.run_sync(
+                lambda c: c.exec_driver_sql(
+                    "ALTER TABLE articles ADD COLUMN deleted_at DATETIME"
+                )
+            )
+        except Exception:
+            pass
+
 
 async def get_db():
     async with async_session() as session:

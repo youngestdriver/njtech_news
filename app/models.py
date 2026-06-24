@@ -35,6 +35,11 @@ class Article(Base):
     source_id: Mapped[int | None] = mapped_column(ForeignKey("sources.id"))
     publish_date: Mapped[str | None] = mapped_column(String(50))
     content_hash: Mapped[str | None] = mapped_column(String(64))
+    is_modified: Mapped[bool] = mapped_column(Boolean, default=False)
+    previous_title: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    modified_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    is_deleted: Mapped[bool] = mapped_column(Boolean, default=False)
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
     source: Mapped["Source | None"] = relationship(back_populates="articles")

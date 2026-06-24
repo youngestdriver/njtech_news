@@ -25,5 +25,8 @@ class Settings(BaseSettings):
     # Database
     database_url: str = "sqlite+aiosqlite:////data/njtech.db"
 
+    # Deletion detection
+    deletion_lookback_days: int = 7
+
     # App
     base_url: str = "http://localhost:8000"

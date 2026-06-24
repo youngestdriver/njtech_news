@@ -1,5 +1,7 @@
+import asyncio
 import hashlib
 import re
+from datetime import datetime, timedelta
 from urllib.parse import urljoin
 
 import httpx
@@ -7,6 +9,7 @@ from bs4 import BeautifulSoup, Tag
 from sqlalchemy import select
 
 from app import database
+from app.config import Settings
 from app.models import Article, Source
 
 NOISE_TITLES = {
@@ -152,8 +155,13 @@ def _extract_from_item(item: Tag, source: Source) -> tuple[str, str, str]:
     return (title, href, date_str)
 
 
-async def fetch_and_parse_source(source: Source) -> int:
-    """Fetch and parse a single source, returning the number of new articles saved."""
+async def fetch_and_parse_source(source: Source) -> dict[str, int]:
+    """Fetch and parse a single source, returning {new, modified, deleted} counts."""
+    settings = Settings()
+    new_count = 0
+    modified_count = 0
+    visible_urls: set[str] = set()
+
     async with database.async_session() as session:
         try:
             async with httpx.AsyncClient(timeout=30) as client:
@@ -165,7 +173,7 @@ async def fetch_and_parse_source(source: Source) -> int:
                 })
                 resp.raise_for_status()
         except Exception:
-            return 0
+            return {"new": 0, "modified": 0, "deleted": 0}
 
         soup = BeautifulSoup(resp.text, "html.parser")
 
@@ -177,11 +185,10 @@ async def fetch_and_parse_source(source: Source) -> int:
             container = soup.select_one(source.selector_container)
 
         if not container:
-            return 0
+            return {"new": 0, "modified": 0, "deleted": 0}
 
         items = _find_items(container, source)
 
-        new_count = 0
         for item in items:
             title, href, date_str = _extract_from_item(item, source)
 
@@ -196,10 +203,24 @@ async def fetch_and_parse_source(source: Source) -> int:
             if not href or href == source.url:
                 continue
 
-            existing = await session.execute(
+            visible_urls.add(href)
+
+            existing_result = await session.execute(
                 select(Article).where(Article.url == href)
             )
-            if existing.scalar_one_or_none():
+            existing = existing_result.scalar_one_or_none()
+
+            if existing:
+                # --- Modification detection ---
+                new_title_clean = title.strip()
+                old_title_clean = (existing.title or "").strip()
+                if new_title_clean and old_title_clean and new_title_clean != old_title_clean:
+                    existing.previous_title = existing.title
+                    existing.title = title[:500]
+                    existing.is_modified = True
+                    existing.modified_at = datetime.now()
+                    existing.content_hash = hashlib.sha256(title.encode()).hexdigest()
+                    modified_count += 1
                 continue
 
             article = Article(
@@ -213,11 +234,63 @@ async def fetch_and_parse_source(source: Source) -> int:
             new_count += 1
 
         await session.commit()
-        return new_count
+
+    # --- Deletion detection (fresh session) ---
+    deleted_count = 0
+    if visible_urls:
+        cutoff = datetime.now() - timedelta(days=settings.deletion_lookback_days)
+
+        async with database.async_session() as del_session:
+            candidates_result = await del_session.execute(
+                select(Article).where(
+                    Article.source_id == source.id,
+                    Article.created_at >= cutoff,
+                    Article.is_deleted == False,
+                    Article.url.notin_(visible_urls)
+                )
+            )
+            candidates = candidates_result.scalars().all()
+
+            if candidates:
+                semaphore = asyncio.Semaphore(5)
+
+                async def _verify_deletion(article: Article) -> bool:
+                    async with semaphore:
+                        try:
+                            async with httpx.AsyncClient(timeout=15) as client:
+                                resp = await client.head(article.url, headers={
+                                    "User-Agent": (
+                                        "Mozilla/5.0 (compatible; NjtechNews/1.0)"
+                                    )
+                                })
+                                if resp.status_code >= 400:
+                                    return True
+                                resp2 = await client.get(article.url, headers={
+                                    "User-Agent": (
+                                        "Mozilla/5.0 (compatible; NjtechNews/1.0)"
+                                    )
+                                })
+                                return resp2.status_code >= 400
+                        except Exception:
+                            return True
+
+                tasks = [_verify_deletion(a) for a in candidates]
+                results = await asyncio.gather(*tasks)
+
+                now = datetime.now()
+                for article, is_gone in zip(candidates, results):
+                    if is_gone:
+                        article.is_deleted = True
+                        article.deleted_at = now
+                        deleted_count += 1
+
+                await del_session.commit()
+
+    return {"new": new_count, "modified": modified_count, "deleted": deleted_count}
 
 
-async def scrape_all_sources() -> dict[str, int]:
-    """Scrape all active sources, returning {source_name: new_article_count}."""
+async def scrape_all_sources() -> dict[str, dict[str, int]]:
+    """Scrape all active sources, returning {source_name: {new, modified, deleted}}."""
     async with database.async_session() as session:
         result = await session.execute(
             select(Source).where(Source.is_active == True)
@@ -226,8 +299,8 @@ async def scrape_all_sources() -> dict[str, int]:
 
     results = {}
     for source in sources:
-        count = await fetch_and_parse_source(source)
-        results[source.name] = count
+        counts = await fetch_and_parse_source(source)
+        results[source.name] = counts
     return results
 
 
@@ -236,7 +309,11 @@ async def get_recent_articles(
 ) -> list[Article]:
     """Get recent articles with optional source filter and pagination."""
     async with database.async_session() as session:
-        q = select(Article).order_by(Article.created_at.desc())
+        q = (
+            select(Article)
+            .where(Article.is_deleted == False)
+            .order_by(Article.created_at.desc())
+        )
         if source_id:
             q = q.where(Article.source_id == source_id)
         q = q.offset((page - 1) * per_page).limit(per_page)
